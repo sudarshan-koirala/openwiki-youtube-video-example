@@ -57,7 +57,7 @@ interface Project {
 |-------|------|---------|
 | `id` | string | Unique project identifier (e.g., `p1`, `p2`) |
 | `name` | string | Project name |
-| `plan` | enum | Billing tier: free (60 req/min), pro (600 req/min), enterprise (3000 req/min) |
+| `plan` | enum | Billing tier: free (60 req/min), pro (900 req/min), enterprise (3000 req/min) |
 | `region` | enum | Geographic region for database routing |
 
 **Seed Data:**
@@ -102,7 +102,7 @@ type PlanTier = "free" | "pro" | "enterprise";
 | Plan | Requests/min | Notes |
 |------|--------------|-------|
 | `free` | 60 | Default if not specified |
-| `pro` | 600 | Standard tier |
+| `pro` | 900 | Standard tier |
 | `enterprise` | 3000 | Contractual; confirm with platform team before changes |
 
 Enterprise limits are contractual commitments. Do not change without coordination.

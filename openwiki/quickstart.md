@@ -9,7 +9,7 @@ This is an **internal task management API** for Meridian Labs. It serves as a ba
 **Key features:**
 - **REST API** for tasks and projects (`GET`, `POST` endpoints)
 - **Multi-region support** (NA, EU, APAC, LATAM) with regional database routing
-- **Plan-tier rate limiting** (free: 60 req/min, pro: 600 req/min, enterprise: 3000 req/min)
+- **Plan-tier rate limiting** (free: 60 req/min, pro: 900 req/min, enterprise: 3000 req/min)
 - **API key authentication** (header-based)
 - **Legacy API alias** for pre-1.0 mobile clients (`/v1/tickets` → `/v2/tasks`)
 

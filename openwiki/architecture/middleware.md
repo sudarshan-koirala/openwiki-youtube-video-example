@@ -86,7 +86,7 @@ Enforces per-plan-tier request rate limits using a sliding 60-second window, key
 ```typescript
 const LIMITS: Record<string, number> = {
   free: 60,
-  pro: 600,
+  pro: 900,
   enterprise: 3000
 };
 ```
@@ -94,7 +94,7 @@ const LIMITS: Record<string, number> = {
 | Plan | Requests per 60 Seconds | Notes |
 |------|-------------------------|-------|
 | free | 60 | Default tier |
-| pro | 600 | 10x increase |
+| pro | 900 | 15x increase |
 | enterprise | 3000 | 50x increase; **contractual** |
 
 ### Behavior

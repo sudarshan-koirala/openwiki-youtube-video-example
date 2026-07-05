@@ -37,7 +37,7 @@ This is a complete reference of all documentation pages in the OpenWiki.
 ## Key Concepts Quick Reference
 
 - **Regions:** NA, EU, APAC, LATAM (see [region-router.md](operations/region-router.md))
-- **Plan Tiers:** free (60 req/min), pro (600 req/min), enterprise (3000 req/min)
+- **Plan Tiers:** free (60 req/min), pro (900 req/min), enterprise (3000 req/min)
 - **Task Status:** todo, in_progress, done
 - **API Versions:** v2 (current), v1 (legacy alias for mobile)
 - **Auth:** x-api-key header (dev: meridian-dev-key, prod: MERIDIAN_API_KEY env)

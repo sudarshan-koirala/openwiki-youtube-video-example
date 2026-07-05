@@ -253,7 +253,7 @@ Include `x-plan-tier` header to specify which rate limit tier applies:
 | Header Value | Requests/min |
 |--------------|--------------|
 | `free` | 60 |
-| `pro` | 600 |
+| `pro` | 900 |
 | `enterprise` | 3000 |
 
 If omitted, defaults to `free`. Each IP+plan-tier combination has its own 60-second sliding window.
