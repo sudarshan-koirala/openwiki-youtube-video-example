@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from "express";
 // platform team before changing them.
 const LIMITS: Record<string, number> = {
   free: 600,
-  pro: 900,
+  pro: 600,
   enterprise: 3000
 };
 
