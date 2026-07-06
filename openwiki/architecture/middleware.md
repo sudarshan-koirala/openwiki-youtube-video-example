@@ -85,17 +85,17 @@ Enforces per-plan-tier request rate limits using a sliding 60-second window, key
 
 ```typescript
 const LIMITS: Record<string, number> = {
-  free: 60,
-  pro: 900,
+  free: 600,
+  pro: 600,
   enterprise: 3000
 };
 ```
 
 | Plan | Requests per 60 Seconds | Notes |
 |------|-------------------------|-------|
-| free | 60 | Default tier |
-| pro | 900 | 15x increase |
-| enterprise | 3000 | 50x increase; **contractual** |
+| free | 600 | Default tier |
+| pro | 600 | Aligned with free tier |
+| enterprise | 3000 | 5x increase; **contractual** |
 
 ### Behavior
 
@@ -192,3 +192,4 @@ This order is correct. Do not reorder without careful consideration of security 
 3. **API key management** — Add key rotation, expiration, scope/permission levels
 4. **CORS** — Add if this becomes a public-facing API
 5. **Logging** — Add request/response logging for debugging and audit trails
+t trails
