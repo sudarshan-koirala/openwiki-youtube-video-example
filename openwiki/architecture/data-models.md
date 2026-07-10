@@ -57,7 +57,7 @@ interface Project {
 |-------|------|---------|
 | `id` | string | Unique project identifier (e.g., `p1`, `p2`) |
 | `name` | string | Project name |
-| `plan` | enum | Billing tier: free (60 req/min), pro (900 req/min), enterprise (3000 req/min) |
+| `plan` | enum | Billing tier: free (600 req/min), pro (700 req/min), enterprise (3000 req/min) |
 | `region` | enum | Geographic region for database routing |
 
 **Seed Data:**

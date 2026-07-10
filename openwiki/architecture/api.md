@@ -239,7 +239,7 @@ Rate limit exceeded for the plan tier.
 ```json
 {
   "error": "rate limit exceeded",
-  "limit": 60,
+  "limit": 600,
   "plan": "free"
 }
 ```

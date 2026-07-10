@@ -94,7 +94,7 @@ const LIMITS: Record<string, number> = {
 | Plan | Requests per 60 Seconds | Notes |
 |------|-------------------------|-------|
 | free | 600 | Default tier |
-| pro | 600 | Aligned with free tier |
+| pro | 700 | +100 over free tier |
 | enterprise | 3000 | 5x increase; **contractual** |
 
 ### Behavior
@@ -131,7 +131,7 @@ export function rateLimit(req: Request, res: Response, next: NextFunction) {
 3. If the counter's window has aged past 60 seconds, reset it
 4. If the counter exceeds the plan's limit, return 429
 
-Example timeline for `free` plan (limit 60):
+Example timeline for `free` plan (limit 600):
 ```
 T=0s:  Request 1  → count=1, window=[0s, 60s)
 T=1s:  Request 2  → count=2, window=[0s, 60s)
@@ -150,14 +150,14 @@ curl -H "x-api-key: meridian-dev-key" \
      http://localhost:4000/v2/tasks
 ```
 
-If the header is missing, defaults to `free` (60 req/min).
+If the header is missing, defaults to `free` (600 req/min).
 
 ### Response on Rate Limit Exceeded
 
 ```json
 {
   "error": "rate limit exceeded",
-  "limit": 60,
+  "limit": 600,
   "plan": "free"
 }
 ```
@@ -193,3 +193,4 @@ This order is correct. Do not reorder without careful consideration of security 
 4. **CORS** — Add if this becomes a public-facing API
 5. **Logging** — Add request/response logging for debugging and audit trails
 t trails
+ls
