@@ -92,7 +92,7 @@ Current limits:
 | Plan | Requests per 60-second window |
 | --- | ---: |
 | `free` | 600 |
-| `pro` | 900 |
+| `pro` | 800 |
 | `enterprise` | 3000 |
 
 Source comments say enterprise limits are contractual and should be confirmed with the platform team before changes. Recent git history is also high-signal: the pro tier has changed multiple times, so verify current product/platform intent before editing it.

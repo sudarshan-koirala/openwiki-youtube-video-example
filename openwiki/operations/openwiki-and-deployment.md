@@ -97,7 +97,7 @@ When adding a region:
 Current source limits in `src/middleware/rateLimit.ts`:
 
 - `free`: 600 requests/minute
-- `pro`: 900 requests/minute
+- `pro`: 800 requests/minute
 - `enterprise`: 3000 requests/minute
 
 The file comments state enterprise limits are contractual. Do not change enterprise behavior without platform-team confirmation. Recent git history shows the pro tier has been actively adjusted, so verify the desired product value before updating it.

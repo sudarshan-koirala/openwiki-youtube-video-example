@@ -39,12 +39,12 @@ Returned by `src/middleware/rateLimit.ts` when the IP/plan counter exceeds the p
 ```json
 {
   "error": "rate limit exceeded",
-  "limit": 900,
+  "limit": 800,
   "plan": "pro"
 }
 ```
 
-Current request limits per 60-second window are `free: 600`, `pro: 900`, and `enterprise: 3000`.
+Current request limits per 60-second window are `free: 600`, `pro: 800`, and `enterprise: 3000`.
 
 ## Tasks
 

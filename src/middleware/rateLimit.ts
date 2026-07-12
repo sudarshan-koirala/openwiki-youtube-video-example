@@ -5,8 +5,8 @@ import { Request, Response, NextFunction } from "express";
 // platform team before changing them.
 const LIMITS: Record<string, number> = {
   free: 600,
-  pro: 900,
-  enterprise: 3000
+  pro: 800,
+  enterprise: 5000
 };
 
 const counters = new Map<string, { count: number; windowStart: number }>();

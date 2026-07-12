@@ -124,7 +124,7 @@ Other important files:
 ### Changing rate limits or auth
 
 1. Read `src/middleware/rateLimit.ts` and `src/middleware/auth.ts` first.
-2. Current limits are `free: 600`, `pro: 900`, `enterprise: 3000` requests per 60-second window.
+2. Current limits are `free: 600`, `pro: 800`, `enterprise: 3000` requests per 60-second window.
 3. Recent git history shows the pro limit has changed multiple times, so verify product/platform intent before editing.
 4. Update docs and run `npm run build`.
 
