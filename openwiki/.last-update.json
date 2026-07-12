@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-07-09T11:13:55.755Z",
+  "updatedAt": "2026-07-12T10:54:13.772Z",
   "command": "update",
-  "gitHead": "e97cfc36062d6062a1643e932d7c07d7ca64af97",
-  "model": "anthropic/claude-haiku-4.5"
+  "gitHead": "52d49c227535f7b84c4b7b3bc703cb492095af9b",
+  "model": "gpt-5.5"
 }

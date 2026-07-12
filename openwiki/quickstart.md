@@ -1,124 +1,153 @@
-# Meridian Tasks API — Quick Start
+# Meridian Tasks API OpenWiki
 
-Welcome to **meridian-tasks-api**, a lightweight Express-based REST API for managing tasks and projects across multiple geographic regions.
+`meridian-tasks-api` is an internal Meridian Labs task and project API. It is a compact TypeScript/Express service that exposes versioned REST routes, applies API-key authentication and plan-tier rate limiting globally, and models work across four regions: `NA`, `EU`, `APAC`, and `LATAM`.
 
-## What is this?
+Start here when you need to answer questions or make changes in this repository. This page gives the operating context and links to the canonical section pages.
 
-This is an **internal task management API** for Meridian Labs. It serves as a backend for task and project lifecycle management, with support for multi-region deployments, plan-based rate limiting, and API key authentication.
+## Documentation map
 
-**Key features:**
-- **REST API** for tasks and projects (`GET`, `POST` endpoints)
-- **Multi-region support** (NA, EU, APAC, LATAM) with regional database routing
-- **Plan-tier rate limiting** (free: 600 req/min, pro: 600 req/min, enterprise: 3000 req/min)
-- **API key authentication** (header-based)
-- **Legacy API alias** for pre-1.0 mobile clients (`/v1/tickets` → `/v2/tasks`)
+- [Architecture overview](./architecture/overview.md) — request flow, source layout, data model, middleware, regional routing, and source-level caveats.
+- [API reference](./architecture/api.md) — task/project endpoints, headers, response shapes, errors, and the legacy route alias.
+- [Operations and OpenWiki workflow](./operations/openwiki-and-deployment.md) — build/run commands, environment variables, deployment concerns, and repository documentation automation.
 
-## Getting Started
+## What the service does
 
-### Install Dependencies
+The API currently supports:
+
+- Listing, fetching, and creating tasks through `src/routes/tasks.ts`.
+- Listing projects and returning per-project task status rollups through `src/routes/projects.ts`.
+- Global authentication through `src/middleware/auth.ts`.
+- Global rate limiting through `src/middleware/rateLimit.ts`.
+- Regional endpoint resolution through `src/services/regionRouter.ts`.
+- A legacy `/v1/tickets` alias for pre-1.0 mobile clients, wired to the same router as `/v2/tasks` in `src/index.ts`.
+
+The current data store is in-memory seed data in `src/db.ts`. That file includes comments about a production Postgres path through `DATABASE_URL`, but there is no database client implementation in the current source.
+
+## Local development
+
+Install dependencies:
+
 ```bash
 npm install
 ```
 
-### Development
+Run the TypeScript source directly:
+
 ```bash
 npm run dev
 ```
-Runs on http://localhost:4000 (or custom `PORT` env var).
 
-### Production Build
+The server listens on `PORT` if set, otherwise `4000` (`src/index.ts`).
+
+Build and run compiled JavaScript:
+
 ```bash
 npm run build
 npm start
 ```
 
-### API Keys
-- **Development:** Use header `x-api-key: meridian-dev-key`
-- **Production:** Set `MERIDIAN_API_KEY` environment variable
+Build output goes to `dist/` from TypeScript source under `src/` (`tsconfig.json`).
 
-### Rate Limiting
-Include `x-plan-tier` header (`free` | `pro` | `enterprise`) for plan-specific limits. Defaults to `free` if missing.
+## Quick request examples
 
----
+Development requests may omit `x-api-key`, but if the header is present it must be the local dev key from `src/middleware/auth.ts`:
 
-## Documentation Map
-
-### [Architecture](./architecture/overview.md)
-- **[API Endpoints & Routes](./architecture/api.md)** — Tasks and projects REST endpoints, query parameters, response shapes
-- **[Data Models](./architecture/data-models.md)** — Task and project schemas, region enum, plan tiers
-- **[Middleware](./architecture/middleware.md)** — Authentication, rate limiting, and error handling
-
-### [Operations](./operations/deployment.md)
-- **[Deployment & Configuration](./operations/deployment.md)** — Environment variables, database setup, regional endpoints
-- **[Region Router](./operations/region-router.md)** — Multi-region routing logic and APAC failover behavior
-
----
-
-## Source Tree
-
+```bash
+curl "http://localhost:4000/v2/tasks" \
+  -H "x-api-key: meridian-dev-key" \
+  -H "x-plan-tier: pro"
 ```
+
+Filter task listing by region and status:
+
+```bash
+curl "http://localhost:4000/v2/tasks?region=APAC&status=todo" \
+  -H "x-api-key: meridian-dev-key"
+```
+
+Fetch a project dashboard rollup:
+
+```bash
+curl "http://localhost:4000/v2/projects/p1/summary" \
+  -H "x-api-key: meridian-dev-key"
+```
+
+See [API reference](./architecture/api.md) for all endpoints and response shapes.
+
+## Source layout
+
+```text
 src/
-├── index.ts                    # Express app, middleware, route registration
-├── db.ts                       # In-memory data store (Task, Project interfaces)
-├── middleware/
-│   ├── auth.ts                 # API key validation
-│   └── rateLimit.ts            # Plan-tier rate limiting
-├── routes/
-│   ├── tasks.ts                # GET, POST tasks; region filtering
-│   └── projects.ts             # GET projects; task summary rollup
-└── services/
-    └── regionRouter.ts         # Regional endpoint resolution, failover logic
+  index.ts                  Express app setup, middleware order, route registration
+  db.ts                     Task/Project interfaces and in-memory seed data
+  middleware/
+    auth.ts                 `x-api-key` authentication behavior
+    rateLimit.ts            per-IP + plan-tier request counters
+  routes/
+    tasks.ts                task listing, lookup, and creation routes
+    projects.ts             project listing and dashboard summary route
+  services/
+    regionRouter.ts         region-to-endpoint mapping and APAC failover flag
 ```
 
----
+Other important files:
 
-## Quick Decision Flows
+- `package.json` — scripts and Node/TypeScript/Express dependencies.
+- `tsconfig.json` — strict TypeScript, ES2022 target, CommonJS module output.
+- `README.md` — repository-level OpenWiki runbook and CLI notes.
+- `.github/workflows/openwiki-update.yml` — automated OpenWiki refresh workflow.
+- `AGENTS.md` and `CLAUDE.md` — agent-facing pointers to this generated wiki. Do not treat them as generated OpenWiki pages.
 
-### Adding a new endpoint?
-1. Create it in `/src/routes/` (or add to existing router)
-2. Import in `/src/index.ts` and register with `app.use()`
-3. Protect with auth/rate limit if needed (auto-applied globally)
-4. Document query params and response shape in [API Endpoints](./architecture/api.md)
+## Current business and product assumptions
 
-### Changing rate limits?
-1. Edit `LIMITS` in `/src/middleware/rateLimit.ts`
-2. Coordinate with platform team if enterprise (contractual)
-3. Update [Middleware](./architecture/middleware.md) docs
+- Tasks and projects are region-scoped to support regional data locality and latency concerns.
+- Project plans are `free`, `pro`, and `enterprise` (`src/db.ts`). These plans feed rate limiting through the `x-plan-tier` request header.
+- Enterprise rate limits are called contractual in `src/middleware/rateLimit.ts`; coordinate with the platform team before changing them.
+- The APAC region has a known failover path to NA when `APAC_FAILOVER=1`; source comments connect this to mobile push notification lag and seed task `t3`.
+- `/v1/tickets` exists only for legacy mobile clients and should remain until mobile v3 rollout is complete (`src/index.ts`).
 
-### Deploying to a new region?
-1. Add endpoint to `REGION_ENDPOINTS` in `/src/services/regionRouter.ts`
-2. Set `DATABASE_URL` to point to regional database in production
-3. Review [Region Router](./operations/region-router.md) failover logic
-4. Update [Operations](./operations/deployment.md) docs with new region credentials
+## Change-oriented guidance
 
-### Fixing APAC failover behavior?
-- See [Region Router — APAC Failover](./operations/region-router.md#apac-failover) for current logic and why it exists
+### Adding or changing routes
 
----
+1. Start in `src/routes/tasks.ts` or `src/routes/projects.ts`.
+2. If adding a new router, register it in `src/index.ts` after the global middleware.
+3. Remember that `authMiddleware` and `rateLimit` apply before every route.
+4. Update [API reference](./architecture/api.md) with request/response behavior.
 
-## Tech Stack
+### Changing data shapes
 
-- **Runtime:** Node.js
-- **Framework:** Express.js 4.19.x
-- **Language:** TypeScript 5.4.x
-- **Data:** In-memory (dev) or PostgreSQL (prod, via `DATABASE_URL` env)
+1. Update `Task` or `Project` interfaces and seed data in `src/db.ts`.
+2. Check route filters and summaries that assume specific enum values.
+3. Update [Architecture overview](./architecture/overview.md) and [API reference](./architecture/api.md).
 
----
+### Changing rate limits or auth
 
-## Key Context
+1. Read `src/middleware/rateLimit.ts` and `src/middleware/auth.ts` first.
+2. Current limits are `free: 600`, `pro: 900`, `enterprise: 3000` requests per 60-second window.
+3. Recent git history shows the pro limit has changed multiple times, so verify product/platform intent before editing.
+4. Update docs and run `npm run build`.
 
-- **Version:** 1.4.2
-- **Main Entry:** `src/index.ts` (starts Express server on port 4000)
-- **Build Target:** CommonJS (ES2022)
-- **Legacy Compatibility:** `/v1/tickets` route kept for pre-1.0 mobile clients; do not remove until mobile v3 rollout
+### Changing regional behavior
 
----
+1. Start with `src/services/regionRouter.ts`.
+2. Keep region enums in `src/db.ts` aligned with endpoint keys.
+3. Be explicit about unknown-region fallback to NA and APAC failover side effects.
 
-## Next Steps
+## Verification
 
-- **Familiarize yourself with the API:** Read [API Endpoints & Routes](./architecture/api.md)
-- **Understand the data model:** Check [Data Models](./architecture/data-models.md)
-- **Deploy or configure:** See [Deployment & Configuration](./operations/deployment.md)
-- **Debug regional issues:** Check [Region Router](./operations/region-router.md)
+There is no test suite in the current repository inventory. At minimum, run:
 
-For any architectural questions, start with [Architecture Overview](./architecture/overview.md).
+```bash
+npm run build
+```
+
+For behavior checks, run `npm run dev` and use curl against the routes listed above.
+
+## Known caveats
+
+- The repository currently has no automated tests.
+- `POST /v2/tasks` copies request body fields into the task without schema validation.
+- In-memory tasks, projects, and rate-limit counters reset on process restart.
+- Rate-limit counters are process-local; horizontal scaling would require shared storage such as Redis.
+- `DATABASE_URL` is documented/commented as a production path, but the source currently does not open database connections.
